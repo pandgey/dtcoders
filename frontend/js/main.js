@@ -8,7 +8,7 @@ function resize() {
   uiH = document.getElementById('ui').offsetHeight + 10;
 }
 resize();
-window.addEventListener('resize', () => { resize(); buildCity(); });
+window.addEventListener('resize', () => { resize(); makeStars(); buildCity(); });
 
 // Main render loop
 let lastBuild = 0;
