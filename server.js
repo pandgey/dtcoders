@@ -7,6 +7,7 @@ let db1 = [];
 app.use(express.json());
 app.set("view engine", "html");
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(__dirname + '/frontend'));
 
 app.listen(PORT_NUMBER, () => {
     console.log(`Server is running on port ${PORT_NUMBER}`);
