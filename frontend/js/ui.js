@@ -11,6 +11,7 @@ function checkMilestone(level) {
   milestones.forEach(ms => {
     if (level >= ms.level && !shownMilestones.has(ms.level)) {
       shownMilestones.add(ms.level);
+      trackStat('milestones');
       const el = document.getElementById('milestone');
       el.textContent = ms.msg;
       el.classList.add('show');
@@ -24,7 +25,7 @@ function fmtCust(v) { const n = Math.round(v/100*5000); return n >= 1000 ? (n/10
 
 function updateUI() {
   const { rev, cust, margin, exp } = state;
-  const health = (rev + margin - exp) / 2;
+  const health = (rev + cust + margin - exp) / 3;
 
   document.getElementById('mv-rev').textContent = fmtRev(rev);
   document.getElementById('mv-cust').textContent = fmtCust(cust);
@@ -39,17 +40,18 @@ function updateUI() {
   const badge = document.getElementById('status-badge');
   const weatherEl = document.getElementById('weather');
 
+  badge.classList.remove('thriving', 'growing', 'struggling');
   if (health > 65) {
     badge.textContent = '● Thriving';
-    badge.style.cssText = 'color:#4ad98a;background:rgba(74,217,138,0.1);border:1px solid rgba(74,217,138,0.3);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;letter-spacing:0.5px;';
+    badge.classList.add('thriving');
     weatherEl.textContent = '☀️';
   } else if (health > 35) {
     badge.textContent = '● Growing';
-    badge.style.cssText = 'color:#4a9eff;background:rgba(74,158,255,0.1);border:1px solid rgba(74,158,255,0.3);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;letter-spacing:0.5px;';
+    badge.classList.add('growing');
     weatherEl.textContent = '🌤️';
   } else {
     badge.textContent = '⚠ Struggling';
-    badge.style.cssText = 'color:#ff6060;background:rgba(255,80,80,0.1);border:1px solid rgba(255,80,80,0.3);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;letter-spacing:0.5px;';
+    badge.classList.add('struggling');
     weatherEl.textContent = '🌧️';
   }
 
