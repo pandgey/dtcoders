@@ -13,10 +13,14 @@ canvas { display: block; }
 #logo span { color: #4a9eff; }
 #status-badge {
   font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
-  background: rgba(74,158,255,0.12); border: 1px solid rgba(74,158,255,0.3);
-  color: #4a9eff; border-radius: 20px; padding: 4px 12px;
+  border-radius: 20px; padding: 4px 12px;
+  border: 1px solid rgba(74,158,255,0.3);
+  background: rgba(74,158,255,0.12); color: #4a9eff;
   transition: all 0.6s ease;
 }
+#status-badge.thriving  { color: #4ad98a; background: rgba(74,217,138,0.1); border-color: rgba(74,217,138,0.3); }
+#status-badge.growing   { color: #4a9eff; background: rgba(74,158,255,0.1); border-color: rgba(74,158,255,0.3); }
+#status-badge.struggling{ color: #ff6060; background: rgba(255,80,80,0.1);  border-color: rgba(255,80,80,0.3); }
 #weather { position: fixed; top: 16px; right: 24px; font-size: 26px; z-index: 20; transition: all 0.5s; }
 
 #ui {
