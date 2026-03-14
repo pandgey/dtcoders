@@ -26,17 +26,15 @@ function buildCity() {
 
   const skyH = H - uiH;
   const groundY = skyH * 0.78;
-  const horizonY = skyH * 0.72;
 
   const cityWidth = W * (0.35 + r * 0.5);
   const cx = W / 2;
-  const numBuildings = Math.floor(12 + r * 80 + c * 40);
+  const numBuildings = Math.min(120, Math.floor(12 + r * 80 + c * 40));
   const maxBldH = skyH * (0.12 + r * 0.45 + m * 0.18);
 
   for (let i = 0; i < numBuildings; i++) {
-    const t = i / numBuildings;
-    // Distribute buildings: more dense in centre
-    const spread = (Math.random() - 0.5) * 2;
+    // Bell-curve spread: average of two randoms clusters buildings at centre
+    const spread = (Math.random() + Math.random() - 1);
     const distFromCentre = Math.abs(spread);
     const bx = cx + spread * cityWidth * 0.5;
 

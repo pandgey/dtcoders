@@ -71,24 +71,14 @@ input[type=range]::-moz-range-thumb {
 }
 #milestone.show { opacity: 1; }
 
-#tooltip {
-  position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
-  background: rgba(8,16,31,0.9); border: 1px solid rgba(74,158,255,0.3);
-  border-radius: 16px; padding: 20px 28px; text-align: center;
-  font-size: 14px; color: #a0c0ff; line-height: 1.6;
-  max-width: 320px; pointer-events: none;
-  opacity: 0; transition: opacity 0.5s; z-index: 25;
-}
-#tooltip.show { opacity: 1; }
-#tooltip strong { color: #4a9eff; font-size: 16px; display: block; margin-bottom: 6px; }
 
 /* Import button */
 #import-btn {
   position: fixed; top: 14px; right: 70px; z-index: 20;
-  display: flex; align-items: center; gap: 6px;
-  background: rgba(74,158,255,0.12); border: 1px solid rgba(74,158,255,0.3);
-  color: #4a9eff; border-radius: 20px; padding: 4px 14px;
-  font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(74,158,255,0.15); border: 1px solid rgba(74,158,255,0.4);
+  color: #4a9eff; border-radius: 28px; padding: 12px 28px;
+  font-size: 15px; font-weight: 700; letter-spacing: 0.5px;
   cursor: pointer; font-family: 'Segoe UI', system-ui, sans-serif;
   transition: background 0.2s;
 }
