@@ -1,103 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BizTown — Business City Visualiser</title>
-<link rel="stylesheet" href="css/styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BizTown: Business City Visualiser</title>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body>
 
-<div id="title-bar">
-  <div id="logo">Biz<span>Town</span></div>
-  <div id="status-badge">● City Initialising</div>
-</div>
-<div id="weather">☀️</div>
-<div id="milestone"></div>
-<button id="import-btn">↑ Import Data</button>
-
-
-<div id="drop-overlay">
-  <div id="drop-box">
-    <button id="close-drop">✕</button>
-    <div class="drop-icon">📂</div>
-    <div class="drop-title">Import business data</div>
-    <div class="drop-sub">Drop a file or click browse.<br>We'll auto-detect revenue, customers, margin and expenses.</div>
-    <div class="fmt-row">
-      <span class="fmt-pill">CSV</span>
-      <span class="fmt-pill">JSON</span>
-      <span class="fmt-pill">TSV</span>
-    </div>
-    <label class="choose-btn" for="file-input">Choose File</label>
-    <input type="file" id="file-input" accept=".csv,.tsv,.json,.txt">
+  <div id="title-bar">
+    <div id="logo">Biz<span>Town</span></div>
+    <div id="status-badge">City Initialising</div>
   </div>
-</div>
+  <div id="weather">&#9728;</div>
+  <div id="milestone"></div>
+  <button id="import-btn">Import Data</button>
 
-<div id="parse-panel">
-  <div class="pp-title">Data imported ✓</div>
-  <div class="pp-file" id="pp-filename">—</div>
-  <div class="pp-grid">
-    <div class="pp-field"><label for="pp-rev">Revenue ($)</label><input id="pp-rev" type="number" min="0" placeholder="—"></div>
-    <div class="pp-field"><label for="pp-cust">Customers</label><input id="pp-cust" type="number" min="0" placeholder="—"></div>
-    <div class="pp-field"><label for="pp-margin">Profit Margin (%)</label><input id="pp-margin" type="number" min="0" max="100" placeholder="—"></div>
-    <div class="pp-field"><label for="pp-exp">Expenses ($)</label><input id="pp-exp" type="number" min="0" placeholder="—"></div>
-  </div>
-  <div class="pp-btns">
-    <button class="pp-apply" id="pp-apply">Apply to City →</button>
-    <button class="pp-cancel" id="pp-cancel">Cancel</button>
-  </div>
-  <div class="pp-note">Tweak values before applying. Detects columns named: revenue, sales, customers, margin, expenses, costs — case-insensitive.</div>
-</div>
 
-<canvas id="c"></canvas>
-
-<div id="ui">
-  <div id="metrics">
-    <div class="metric">
-      <div class="metric-label">Revenue</div>
-      <div class="metric-value" id="mv-rev">$0</div>
-      <div class="metric-hint" id="mh-rev">City size</div>
-    </div>
-    <div class="metric">
-      <div class="metric-label">Customers</div>
-      <div class="metric-value" id="mv-cust">0</div>
-      <div class="metric-hint" id="mh-cust">Population density</div>
-    </div>
-    <div class="metric">
-      <div class="metric-label">Profit Margin</div>
-      <div class="metric-value" id="mv-margin">0%</div>
-      <div class="metric-hint" id="mh-margin">Building quality</div>
-    </div>
-    <div class="metric">
-      <div class="metric-label">Expenses</div>
-      <div class="metric-value" id="mv-exp">$0</div>
-      <div class="metric-hint" id="mh-exp">Construction load</div>
+  <div id="drop-overlay">
+    <div id="drop-box">
+      <button id="close-drop">&#x2715;</button>
+      <div class="drop-icon">&#x1F4C2;</div>
+      <div class="drop-title">Import Business Data</div>
+      <div class="drop-sub">Drop a file or click browse.<br>We will auto-detect revenue, customers, margin and expenses.
+      </div>
+      <div class="fmt-row">
+        <span class="fmt-pill">CSV</span>
+        <span class="fmt-pill">JSON</span>
+        <span class="fmt-pill">TSV</span>
+        <span class="fmt-pill">TXT</span>
+      </div>
+      <label class="choose-btn" for="file-input">Choose File</label>
+      <input type="file" id="file-input" accept=".csv,.tsv,.json,.txt">
     </div>
   </div>
-  <div id="sliders">
-    <div class="slider-wrap">
-      <label>Revenue <span class="val" id="lv-rev">$0</span></label>
-      <input type="range" id="sr" min="0" max="100" value="0">
+
+  <div id="parse-panel">
+    <div class="pp-title">Data Imported &#10003;</div>
+    <div class="pp-file" id="pp-filename">-</div>
+    <div class="pp-grid">
+      <div class="pp-field"><label for="pp-rev">Revenue ($)</label><input id="pp-rev" type="number" min="0"
+          placeholder="-"></div>
+      <div class="pp-field"><label for="pp-cust">Customers</label><input id="pp-cust" type="number" min="0"
+          placeholder="-"></div>
+      <div class="pp-field"><label for="pp-margin">Profit Margin (%)</label><input id="pp-margin" type="number" min="0"
+          max="100" placeholder="-"></div>
+      <div class="pp-field"><label for="pp-exp">Expenses ($)</label><input id="pp-exp" type="number" min="0"
+          placeholder="-"></div>
     </div>
-    <div class="slider-wrap">
-      <label>Customers <span class="val" id="lv-cust">0</span></label>
-      <input type="range" id="sc" min="0" max="100" value="0">
+    <div class="pp-btns">
+      <button class="pp-apply" id="pp-apply">Apply to City</button>
+      <button class="pp-cancel" id="pp-cancel">Cancel</button>
     </div>
-    <div class="slider-wrap">
-      <label>Profit Margin <span class="val" id="lv-margin">0%</span></label>
-      <input type="range" id="sm" min="0" max="100" value="0">
+    <div class="pp-note">Tweak values before applying. Detects columns named: revenue, sales, customers, margin,
+      expenses, costs - case-insensitive.</div>
+  </div>
+
+  <canvas id="c"></canvas>
+
+  <div id="ui">
+    <div id="metrics">
+      <div class="metric">
+        <div class="metric-label">Revenue</div>
+        <div class="metric-value" id="mv-rev">$0</div>
+        <div class="metric-hint" id="mh-rev">City size</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Customers</div>
+        <div class="metric-value" id="mv-cust">0</div>
+        <div class="metric-hint" id="mh-cust">Population density</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Profit Margin</div>
+        <div class="metric-value" id="mv-margin">0%</div>
+        <div class="metric-hint" id="mh-margin">Building quality</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Expenses</div>
+        <div class="metric-value" id="mv-exp">$0</div>
+        <div class="metric-hint" id="mh-exp">Construction load</div>
+      </div>
     </div>
-    <div class="slider-wrap">
-      <label>Expenses <span class="val" id="lv-exp">$0</span></label>
-      <input type="range" id="se" min="0" max="100" value="0">
+    <div id="sliders">
+      <div class="slider-wrap">
+        <label>Revenue <span class="val" id="lv-rev">$0</span></label>
+        <input type="range" id="sr" min="0" max="100" value="0">
+      </div>
+      <div class="slider-wrap">
+        <label>Customers <span class="val" id="lv-cust">0</span></label>
+        <input type="range" id="sc" min="0" max="100" value="0">
+      </div>
+      <div class="slider-wrap">
+        <label>Profit Margin <span class="val" id="lv-margin">0%</span></label>
+        <input type="range" id="sm" min="0" max="100" value="0">
+      </div>
+      <div class="slider-wrap">
+        <label>Expenses <span class="val" id="lv-exp">$0</span></label>
+        <input type="range" id="se" min="0" max="100" value="0">
+      </div>
     </div>
   </div>
-</div>
 
-<script src="js/city.js"></script>
-<script src="js/draw.js"></script>
-<script src="js/ui.js"></script>
-<script src="js/import.js"></script>
-<script src="js/main.js"></script>
+  <script src="js/city.js"></script>
+  <script src="js/draw.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/import.js"></script>
+  <script src="js/main.js"></script>
 </body>
+
 </html>
