@@ -74,7 +74,7 @@ input[type=range]::-moz-range-thumb {
 
 /* Import button */
 #import-btn {
-  position: fixed; top: 14px; right: 70px; z-index: 20;
+  position: fixed; top: 14px; right: 240px; z-index: 20;
   display: flex; align-items: center; gap: 8px;
   background: rgba(74,158,255,0.15); border: 1px solid rgba(74,158,255,0.4);
   color: #4a9eff; border-radius: 28px; padding: 12px 28px;
@@ -83,6 +83,19 @@ input[type=range]::-moz-range-thumb {
   transition: background 0.2s;
 }
 #import-btn:hover { background: rgba(74,158,255,0.22); }
+
+/* Profile button */
+#profile-btn {
+  position: fixed; top: 14px; right: 70px; z-index: 20;
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(255,95,160,0.15); border: 1px solid rgba(255,95,160,0.4);
+  color: #ff5fa0; border-radius: 28px; padding: 12px 28px;
+  font-size: 15px; font-weight: 700; letter-spacing: 0.5px;
+  cursor: pointer; font-family: 'Segoe UI', system-ui, sans-serif;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+#profile-btn:hover { background: rgba(255,95,160,0.25); }
 
 /* Drop overlay */
 #drop-overlay {

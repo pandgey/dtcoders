@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile — BizTown</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/profile.css">
+</head>
+<body class="profile-page">
+
+<div id="title-bar">
+  <div id="logo">Biz<span>Town</span></div>
+  <a href="/" id="back-btn">← Back to City</a>
+</div>
+
+<div id="profile-root">
+
+  <div class="profile-card">
+    <div class="avatar" id="avatar-initials">JD</div>
+    <div class="profile-name" id="profile-name">Jane Doe</div>
+    <div class="profile-role" id="profile-role">Business Analyst</div>
+    <div class="profile-since">Member since March 2026</div>
+    <button class="edit-btn" id="edit-btn">Edit Profile</button>
+  </div>
+
+  <div class="edit-form" id="edit-form">
+    <div class="ef-field">
+      <label for="ef-name">Display Name</label>
+      <input type="text" id="ef-name" placeholder="Your name">
+    </div>
+    <div class="ef-field">
+      <label for="ef-role">Role</label>
+      <input type="text" id="ef-role" placeholder="Your role">
+    </div>
+    <div class="ef-btns">
+      <button class="ef-save" id="ef-save">Save</button>
+      <button class="ef-cancel" id="ef-cancel">Cancel</button>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-value" id="stat-cities">0</div>
+      <div class="stat-label">Cities Built</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="stat-milestones">0</div>
+      <div class="stat-label">Milestones Reached</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="stat-imports">0</div>
+      <div class="stat-label">Files Imported</div>
+    </div>
+  </div>
+
+  <div class="profile-section">
+    <div class="section-title">Last City State</div>
+    <div class="city-snapshot" id="city-snapshot">
+      <div class="snap-empty">No city data yet. <a href="/">Go build one!</a></div>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/profile.js"></script>
+</body>
+</html>
