@@ -269,20 +269,20 @@
   </div>
   <div id="sliders">
     <div class="slider-wrap">
-      <label>Revenue <span class="val" id="lv-rev">$50k</span></label>
-      <input type="range" id="sr" min="0" max="100" value="50">
+      <label>Revenue <span class="val" id="lv-rev">$0</span></label>
+      <input type="range" id="sr" min="0" max="100" value="0">
     </div>
     <div class="slider-wrap">
-      <label>Customers <span class="val" id="lv-cust">500</span></label>
-      <input type="range" id="sc" min="0" max="100" value="50">
+      <label>Customers <span class="val" id="lv-cust">0</span></label>
+      <input type="range" id="sc" min="0" max="100" value="0">
     </div>
     <div class="slider-wrap">
-      <label>Profit Margin <span class="val" id="lv-margin">50%</span></label>
-      <input type="range" id="sm" min="0" max="100" value="50">
+      <label>Profit Margin <span class="val" id="lv-margin">0%</span></label>
+      <input type="range" id="sm" min="0" max="100" value="0">
     </div>
     <div class="slider-wrap">
-      <label>Expenses <span class="val" id="lv-exp">$25k</span></label>
-      <input type="range" id="se" min="0" max="100" value="25">
+      <label>Expenses <span class="val" id="lv-exp">$0</span></label>
+      <input type="range" id="se" min="0" max="100" value="0">
     </div>
   </div>
 </div>
@@ -301,7 +301,7 @@ resize();
 window.addEventListener('resize', () => { resize(); buildCity(); });
 
 // State
-let state = { rev: 50, cust: 50, margin: 50, exp: 25 };
+let state = { rev: 0, cust: 0, margin: 0, exp: 0 };
 let buildings = [];
 let particles = [];
 let cranes = [];
