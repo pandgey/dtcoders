@@ -108,7 +108,7 @@ function drawSky(health, t) {
   });
 
   // Moon or storm cloud
-  if (health > 35) {
+  if (health > 65) {
     ctx.beginPath();
     ctx.arc(W * 0.85, H * 0.08, 18, 0, Math.PI * 2);
     ctx.fillStyle = 'rgba(255,250,220,0.9)';
