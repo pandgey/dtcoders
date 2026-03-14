@@ -1,7 +1,14 @@
+// Helper to increment a stat and save lastState in localStorage
+function trackStat(key, lastState) {
+  const s = JSON.parse(localStorage.getItem('biztownStats') || 'null') || { cities: 0, milestones: 0, imports: 0, lastState: null };
+  if (key) s[key] = (s[key] || 0) + 1;
+  if (lastState !== undefined) s.lastState = lastState;
+  localStorage.setItem('biztownStats', JSON.stringify(s));
+}
+
 // Global state
 let state = { rev: 0, cust: 0, margin: 0, exp: 0 };
 let buildings = [];
-let particles = [];
 let cranes = [];
 let stars = [];
 let animT = 0;
@@ -17,7 +24,6 @@ function makeStars() {
 function buildCity() {
   buildings = [];
   cranes = [];
-  particles = [];
 
   const r = state.rev / 100;
   const c = state.cust / 100;
@@ -72,6 +78,9 @@ function buildCity() {
 
   // Sort by depth
   buildings.sort((a, b) => a.depthLayer - b.depthLayer);
+
+  // Track cities built and save last slider state for profile page
+  trackStat('cities', { rev: state.rev, cust: state.cust, margin: state.margin, exp: state.exp });
 
   // Cranes when expenses high
   if (e > 0.3) {
