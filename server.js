@@ -17,6 +17,10 @@ app.get("/", (req, res) => {
     res.sendFile(__dirname + '/frontend/index.html');
 });
 
+app.get("/profile", (req, res) => {
+    res.sendFile(__dirname + '/frontend/profile.html');
+});
+
 function calculateBuildingHeight(file) {
     let height = 0;
     for (let i = 0; i < file.length; i++) {
