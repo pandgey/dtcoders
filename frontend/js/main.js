@@ -10,8 +10,10 @@ function resize() {
 resize();
 window.addEventListener('resize', () => { resize(); makeStars(); buildCity(); });
 
+// Cached health value — updated only when state changes, not every frame
+let health = 0;
+
 // Main render loop
-let lastBuild = 0;
 function render(ts) {
   requestAnimationFrame(render);
   animT = ts / 1000;
@@ -19,7 +21,6 @@ function render(ts) {
   const groundY = skyH * 0.78;
 
   ctx.clearRect(0, 0, W, H);
-  const health = updateUI();
   drawSky(health, animT);
   drawGround(groundY, skyH);
   cranes.forEach(cr => drawCrane(cr, animT));
@@ -33,6 +34,7 @@ function onSlider() {
   state.cust   = +document.getElementById('sc').value;
   state.margin = +document.getElementById('sm').value;
   state.exp    = +document.getElementById('se').value;
+  health = updateUI();
   clearTimeout(rebuildTimer);
   rebuildTimer = setTimeout(buildCity, 150);
 }
@@ -41,4 +43,5 @@ function onSlider() {
 // Init
 makeStars();
 buildCity();
+health = updateUI();
 requestAnimationFrame(render);

@@ -32,6 +32,15 @@ function showImportToast(msg, type) {
   setTimeout(() => el.remove(), 3200);
 }
 
+// Detect CSV separator from file extension and first line content
+function detectSep(text, filename) {
+  if (filename.endsWith('.tsv')) return '\t';
+  const firstLine = text.split(/\r?\n/)[0] || '';
+  const counts = { ',': 0, '\t': 0, ';': 0 };
+  for (const ch of firstLine) if (ch in counts) counts[ch]++;
+  return Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
+}
+
 function processFile(file) {
   overlay.classList.remove('active');
   const reader = new FileReader();
@@ -40,7 +49,7 @@ function processFile(file) {
       const text = e.target.result;
       const parsed = file.name.endsWith('.json')
         ? parseJSON(text)
-        : parseCSV(text, file.name.endsWith('.tsv') ? '\t' : ',');
+        : parseCSV(text, detectSep(text, file.name));
       if (parsed) showParsePanel(file.name, parsed);
       else throw new Error('No metrics detected');
     } catch (err) {
@@ -146,6 +155,8 @@ document.getElementById('pp-apply').addEventListener('click', () => {
 
   document.getElementById('parse-panel').classList.remove('open');
   buildCity();
+  health = updateUI();
+  trackStat('imports');
   showImportToast('📊 City updated from your data!', 'ok');
 });
 
