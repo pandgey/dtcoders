@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BizTown — Business City Visualiser</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #08101f; font-family: 'Segoe UI', system-ui, sans-serif; color: #e0e8ff; overflow: hidden; height: 100vh; }
+  canvas { display: block; }
+
+  #title-bar {
+    position: fixed; top: 0; left: 0; right: 0;
+    padding: 14px 24px;
+    display: flex; align-items: center; gap: 14px;
+    background: linear-gradient(180deg, rgba(8,16,31,0.95) 0%, transparent 100%);
+    z-index: 20;
+  }
+  #logo { font-size: 22px; font-weight: 800; letter-spacing: -1px; color: #fff; }
+  #logo span { color: #4a9eff; }
+  #status-badge {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
+    background: rgba(74,158,255,0.12); border: 1px solid rgba(74,158,255,0.3);
+    color: #4a9eff; border-radius: 20px; padding: 4px 12px;
+    transition: all 0.6s ease;
+  }
+  #weather { position: fixed; top: 16px; right: 24px; font-size: 26px; z-index: 20; transition: all 0.5s; }
+
+  #ui {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(0deg, rgba(8,16,31,0.98) 60%, transparent 100%);
+    padding: 0 24px 24px;
+    z-index: 20;
+  }
+
+  #metrics {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 10px; margin-bottom: 14px;
+  }
+  .metric {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px; padding: 12px 14px;
+  }
+  .metric-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: #4a6080; margin-bottom: 4px; }
+  .metric-value { font-size: 22px; font-weight: 700; color: #e8f0ff; line-height: 1; }
+  .metric-hint { font-size: 10px; margin-top: 4px; color: #3a6090; }
+
+  #sliders { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .slider-wrap { }
+  .slider-wrap label {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 11px; color: #4a6080; text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .slider-wrap label .val { color: #8ab4ff; font-weight: 600; }
+  input[type=range] {
+    width: 100%; height: 3px; -webkit-appearance: none; appearance: none;
+    background: rgba(255,255,255,0.08); border-radius: 2px; outline: none; cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 16px; height: 16px;
+    border-radius: 50%; background: #4a9eff; cursor: pointer;
+    box-shadow: 0 0 8px rgba(74,158,255,0.6);
+  }
+  input[type=range]::-moz-range-thumb {
+    width: 16px; height: 16px; border-radius: 50%;
+    background: #4a9eff; cursor: pointer; border: none;
+  }
+
+  #milestone {
+    position: fixed; top: 60px; left: 50%; transform: translateX(-50%);
+    background: rgba(255,220,80,0.15); border: 1px solid rgba(255,220,80,0.4);
+    color: #ffdc50; border-radius: 30px; padding: 8px 20px;
+    font-size: 13px; font-weight: 600;
+    opacity: 0; transition: opacity 0.4s;
+    z-index: 30; pointer-events: none;
+  }
+  #milestone.show { opacity: 1; }
+
+  #tooltip {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    background: rgba(8,16,31,0.9); border: 1px solid rgba(74,158,255,0.3);
+    border-radius: 16px; padding: 20px 28px; text-align: center;
+    font-size: 14px; color: #a0c0ff; line-height: 1.6;
+    max-width: 320px; pointer-events: none;
+    opacity: 0; transition: opacity 0.5s; z-index: 25;
+  }
+  #tooltip.show { opacity: 1; }
+  #tooltip strong { color: #4a9eff; font-size: 16px; display: block; margin-bottom: 6px; }
+</style>
+</head>
+<body>
+
+<div id="title-bar">
+  <div id="logo">Biz<span>Town</span></div>
+  <div id="status-badge">● City Initialising</div>
+</div>
+<div id="weather">☀️</div>
+<div id="milestone" id="milestone"></div>
+<div id="tooltip"><strong id="tt-title"></strong><span id="tt-body"></span></div>
+
+<canvas id="c"></canvas>
+
+<div id="ui">
+  <div id="metrics">
+    <div class="metric">
+      <div class="metric-label">Revenue</div>
+      <div class="metric-value" id="mv-rev">$0</div>
+      <div class="metric-hint" id="mh-rev">City size</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Customers</div>
+      <div class="metric-value" id="mv-cust">0</div>
+      <div class="metric-hint" id="mh-cust">Population density</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Profit Margin</div>
+      <div class="metric-value" id="mv-margin">0%</div>
+      <div class="metric-hint" id="mh-margin">Building quality</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Expenses</div>
+      <div class="metric-value" id="mv-exp">$0</div>
+      <div class="metric-hint" id="mh-exp">Construction load</div>
+    </div>
+  </div>
+  <div id="sliders">
+    <div class="slider-wrap">
+      <label>Revenue <span class="val" id="lv-rev">$50k</span></label>
+      <input type="range" id="sr" min="0" max="100" value="50">
+    </div>
+    <div class="slider-wrap">
+      <label>Customers <span class="val" id="lv-cust">500</span></label>
+      <input type="range" id="sc" min="0" max="100" value="50">
+    </div>
+    <div class="slider-wrap">
+      <label>Profit Margin <span class="val" id="lv-margin">50%</span></label>
+      <input type="range" id="sm" min="0" max="100" value="50">
+    </div>
+    <div class="slider-wrap">
+      <label>Expenses <span class="val" id="lv-exp">$25k</span></label>
+      <input type="range" id="se" min="0" max="100" value="25">
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+let W, H, uiH;
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  uiH = document.getElementById('ui').offsetHeight + 10;
+}
+resize();
+window.addEventListener('resize', () => { resize(); buildCity(); });
+
+// State
+let state = { rev: 50, cust: 50, margin: 50, exp: 25 };
+let buildings = [];
+let particles = [];
+let cranes = [];
+let stars = [];
+let animT = 0;
+let prevLevel = 0;
+
+// Stars
+function makeStars() {
+  stars = [];
+  for (let i = 0; i < 200; i++) {
+    stars.push({ x: Math.random() * W, y: Math.random() * (H * 0.55), r: Math.random() * 1.2 + 0.2, twinkle: Math.random() * Math.PI * 2 });
+  }
+}
+makeStars();
+
+// Building generator
+function buildCity() {
+  buildings = [];
+  cranes = [];
+  particles = [];
+
+  const r = state.rev / 100;
+  const c = state.cust / 100;
+  const m = state.margin / 100;
+  const e = state.exp / 100;
+
+  const skyH = H - uiH;
+  const groundY = skyH * 0.78;
+  const horizonY = skyH * 0.72;
+
+  const cityWidth = W * (0.35 + r * 0.5);
+  const cx = W / 2;
+  const numBuildings = Math.floor(12 + r * 80 + c * 40);
+  const maxBldH = skyH * (0.12 + r * 0.45 + m * 0.18);
+
+  for (let i = 0; i < numBuildings; i++) {
+    const t = i / numBuildings;
+    // Distribute buildings: more dense in centre
+    const spread = (Math.random() - 0.5) * 2;
+    const distFromCentre = Math.abs(spread);
+    const bx = cx + spread * cityWidth * 0.5;
+
+    // Height falls off from centre
+    const centreFactor = Math.pow(1 - distFromCentre * 0.8, 1.4);
+    const bh = Math.max(8, centreFactor * maxBldH * (0.3 + Math.random() * 0.7));
+    const bw = 14 + Math.random() * (30 + r * 20) * centreFactor;
+
+    // Depth for isometric feel — buildings further back are smaller
+    const depthLayer = Math.random();
+    const scale = 0.6 + depthLayer * 0.4;
+    const by = groundY - bh * scale + (1 - depthLayer) * skyH * 0.04;
+
+    // Colour based on margin and height
+    let hue, sat, lit2;
+    if (m > 0.65) { hue = 200 + Math.random() * 30; sat = 60 + m * 30; lit2 = 25 + centreFactor * 25; }
+    else if (m > 0.35) { hue = 220 + Math.random() * 20; sat = 30 + m * 40; lit2 = 18 + centreFactor * 18; }
+    else { hue = 260 + Math.random() * 30; sat = 20; lit2 = 12 + centreFactor * 10; }
+
+    // Window glow colour
+    const winHue = m > 0.5 ? 45 : 200;
+
+    buildings.push({
+      x: bx - bw * scale / 2,
+      y: by,
+      w: bw * scale,
+      h: bh * scale,
+      hue, sat, lit: lit2,
+      winHue,
+      depthLayer,
+      winPhase: Math.random() * Math.PI * 2,
+      winDensity: 0.3 + m * 0.5,
+    });
+  }
+
+  // Sort by depth
+  buildings.sort((a, b) => a.depthLayer - b.depthLayer);
+
+  // Cranes when expenses high
+  if (e > 0.3) {
+    const numCranes = Math.floor(e * 8);
+    for (let i = 0; i < numCranes; i++) {
+      const bx = cx + (Math.random() - 0.5) * cityWidth * 0.7;
+      cranes.push({ x: bx, y: groundY, h: 60 + Math.random() * 40 });
+    }
+  }
+}
+
+// Milestone system
+const milestones = [
+  { level: 20, msg: '🏠 First neighbourhood unlocked!' },
+  { level: 40, msg: '🏢 Commercial district appearing!' },
+  { level: 60, msg: '🏙️ Skyline taking shape!' },
+  { level: 80, msg: '🌆 Thriving metropolis!' },
+  { level: 95, msg: '🌃 World-class city achieved!' },
+];
+let shownMilestones = new Set();
+
+function checkMilestone(level) {
+  milestones.forEach(ms => {
+    if (level >= ms.level && !shownMilestones.has(ms.level)) {
+      shownMilestones.add(ms.level);
+      const el = document.getElementById('milestone');
+      el.textContent = ms.msg;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 3000);
+    }
+  });
+}
+
+// Draw helpers
+function drawBuilding(b, t) {
+  const winGlow = 0.6 + 0.4 * Math.sin(t * 1.5 + b.winPhase);
+  const bodyColor = `hsl(${b.hue},${b.sat}%,${b.lit}%)`;
+  const topColor = `hsl(${b.hue},${b.sat + 10}%,${b.lit + 8}%)`;
+
+  // Body
+  ctx.fillStyle = bodyColor;
+  ctx.fillRect(b.x, b.y, b.w, b.h);
+
+  // Slightly lighter top strip
+  ctx.fillStyle = topColor;
+  ctx.fillRect(b.x, b.y, b.w, Math.min(6, b.h * 0.1));
+
+  // Edge highlight
+  ctx.strokeStyle = `hsla(${b.hue},70%,${b.lit + 20}%,0.3)`;
+  ctx.lineWidth = 0.5;
+  ctx.strokeRect(b.x, b.y, b.w, b.h);
+
+  // Windows
+  const cols = Math.max(1, Math.floor(b.w / 7));
+  const rows = Math.max(1, Math.floor(b.h / 9));
+  const ww = Math.max(2, b.w / cols - 3);
+  const wh = Math.max(2, b.h / rows - 4);
+
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      if (Math.sin(b.winPhase + row * 1.7 + col * 2.3) > (1 - b.winDensity) * 2 - 1) {
+        const wx = b.x + 3 + col * (b.w / cols);
+        const wy = b.y + 6 + row * (b.h / rows);
+        const flicker = 0.7 + 0.3 * Math.sin(t * 2 + b.winPhase + row + col);
+        const alpha = 0.5 + 0.5 * flicker;
+        ctx.fillStyle = `hsla(${b.winHue},80%,75%,${alpha})`;
+        ctx.fillRect(wx, wy, ww, wh);
+      }
+    }
+  }
+}
+
+function drawCrane(cr, t) {
+  ctx.strokeStyle = '#e87820';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.moveTo(cr.x, cr.y);
+  ctx.lineTo(cr.x, cr.y - cr.h);
+  ctx.stroke();
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(cr.x - 5, cr.y - cr.h);
+  ctx.lineTo(cr.x + cr.h * 0.6, cr.y - cr.h);
+  ctx.stroke();
+  // Dangling hook
+  const hookX = cr.x + cr.h * 0.6 - 10 + Math.sin(t * 0.8 + cr.x) * 5;
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = '#e87820aa';
+  ctx.beginPath();
+  ctx.moveTo(cr.x + cr.h * 0.6 - 10, cr.y - cr.h);
+  ctx.lineTo(hookX, cr.y - cr.h + 25);
+  ctx.stroke();
+}
+
+function drawGround(groundY, skyH) {
+  // Ground plane
+  const grd = ctx.createLinearGradient(0, groundY, 0, H - uiH);
+  grd.addColorStop(0, '#0d1828');
+  grd.addColorStop(1, '#080f1a');
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, groundY, W, H - uiH - groundY);
+
+  // Road lines
+  ctx.strokeStyle = 'rgba(30,60,100,0.6)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i < 5; i++) {
+    const ry = groundY + 4 + i * 8;
+    if (ry > H - uiH) break;
+    ctx.beginPath();
+    ctx.moveTo(0, ry);
+    ctx.lineTo(W, ry);
+    ctx.stroke();
+  }
+}
+
+function drawSky(health, t) {
+  const skyH = H - uiH;
+  let topColor, midColor;
+  if (health > 65) {
+    topColor = '#06101f';
+    midColor = '#0a1830';
+  } else if (health > 35) {
+    topColor = '#060e1c';
+    midColor = '#0a1525';
+  } else {
+    topColor = '#0c0810';
+    midColor = '#180d20';
+  }
+  const grd = ctx.createLinearGradient(0, 0, 0, skyH * 0.8);
+  grd.addColorStop(0, topColor);
+  grd.addColorStop(1, midColor);
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, W, skyH);
+
+  // Stars
+  stars.forEach(s => {
+    const tw = 0.5 + 0.5 * Math.sin(t * 1.2 + s.twinkle);
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r * tw, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(180,200,255,${0.4 + 0.5 * tw})`;
+    ctx.fill();
+  });
+
+  // Moon or storm cloud
+  if (health > 35) {
+    ctx.beginPath();
+    ctx.arc(W * 0.85, H * 0.08, 18, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,250,220,0.9)';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(W * 0.85 + 10, H * 0.08 - 5, 14, 0, Math.PI * 2);
+    ctx.fillStyle = midColor;
+    ctx.fill();
+  } else {
+    // Storm cloud
+    const cx2 = W * 0.8, cy2 = H * 0.1;
+    ctx.fillStyle = 'rgba(40,20,60,0.8)';
+    [[-20,0,28],[0,-8,22],[20,0,26],[0,8,20]].forEach(([ox,oy,r]) => {
+      ctx.beginPath(); ctx.arc(cx2+ox, cy2+oy, r, 0, Math.PI*2); ctx.fill();
+    });
+    // Lightning
+    if (Math.sin(t * 7) > 0.92) {
+      ctx.strokeStyle = 'rgba(180,140,255,0.9)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(cx2, cy2+28);
+      ctx.lineTo(cx2-8, cy2+50);
+      ctx.lineTo(cx2+4, cy2+50);
+      ctx.lineTo(cx2-4, cy2+70);
+      ctx.stroke();
+    }
+  }
+
+  // City glow on horizon
+  const glowColor = health > 65 ? 'rgba(60,120,255,0.15)' : health > 35 ? 'rgba(40,80,180,0.1)' : 'rgba(80,20,80,0.1)';
+  const glw = ctx.createRadialGradient(W/2, skyH * 0.74, 0, W/2, skyH * 0.74, W * 0.5);
+  glw.addColorStop(0, glowColor);
+  glw.addColorStop(1, 'transparent');
+  ctx.fillStyle = glw;
+  ctx.fillRect(0, skyH * 0.5, W, skyH * 0.3);
+}
+
+// Metrics UI update
+function fmtRev(v) { const n = Math.round(v/100*500); return n >= 1000 ? '$'+(n/1000).toFixed(0)+'k' : '$'+n; }
+function fmtCust(v) { const n = Math.round(v/100*5000); return n >= 1000 ? (n/1000).toFixed(1)+'k' : n.toString(); }
+
+function updateUI() {
+  const { rev, cust, margin, exp } = state;
+  const health = (rev + margin - exp) / 2;
+
+  document.getElementById('mv-rev').textContent = fmtRev(rev);
+  document.getElementById('mv-cust').textContent = fmtCust(cust);
+  document.getElementById('mv-margin').textContent = Math.round(margin) + '%';
+  document.getElementById('mv-exp').textContent = fmtRev(exp / 2);
+
+  document.getElementById('lv-rev').textContent = fmtRev(rev);
+  document.getElementById('lv-cust').textContent = fmtCust(cust);
+  document.getElementById('lv-margin').textContent = Math.round(margin) + '%';
+  document.getElementById('lv-exp').textContent = fmtRev(exp / 2);
+
+  const badge = document.getElementById('status-badge');
+  const weatherEl = document.getElementById('weather');
+
+  if (health > 65) {
+    badge.textContent = '● Thriving';
+    badge.style.cssText = 'color:#4ad98a;background:rgba(74,217,138,0.1);border:1px solid rgba(74,217,138,0.3);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;letter-spacing:0.5px;';
+    weatherEl.textContent = '☀️';
+  } else if (health > 35) {
+    badge.textContent = '● Growing';
+    badge.style.cssText = 'color:#4a9eff;background:rgba(74,158,255,0.1);border:1px solid rgba(74,158,255,0.3);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;letter-spacing:0.5px;';
+    weatherEl.textContent = '🌤️';
+  } else {
+    badge.textContent = '⚠ Struggling';
+    badge.style.cssText = 'color:#ff6060;background:rgba(255,80,80,0.1);border:1px solid rgba(255,80,80,0.3);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;letter-spacing:0.5px;';
+    weatherEl.textContent = '🌧️';
+  }
+
+  const level = Math.round((rev + cust + margin) / 3);
+  checkMilestone(level);
+  return health;
+}
+
+// Main render loop
+let lastBuild = 0;
+function render(ts) {
+  requestAnimationFrame(render);
+  animT = ts / 1000;
+  const skyH = H - uiH;
+  const groundY = skyH * 0.78;
+
+  ctx.clearRect(0, 0, W, H);
+  const health = updateUI();
+  drawSky(health, animT);
+  drawGround(groundY, skyH);
+  cranes.forEach(cr => drawCrane(cr, animT));
+  buildings.forEach(b => drawBuilding(b, animT));
+}
+
+// Slider events
+let rebuildTimer;
+function onSlider() {
+  state.rev    = +document.getElementById('sr').value;
+  state.cust   = +document.getElementById('sc').value;
+  state.margin = +document.getElementById('sm').value;
+  state.exp    = +document.getElementById('se').value;
+  clearTimeout(rebuildTimer);
+  rebuildTimer = setTimeout(buildCity, 150);
+}
+['sr','sc','sm','se'].forEach(id => document.getElementById(id).addEventListener('input', onSlider));
+
+// Init
+buildCity();
+requestAnimationFrame(render);
+</script>
+</body>
+</html>
