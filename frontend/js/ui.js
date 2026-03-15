@@ -37,7 +37,7 @@ function updateUI() {
   document.getElementById('mv-rev').textContent = fmtRev(rev);
   document.getElementById('mv-cust').textContent = fmtCust(cust);
   document.getElementById('mv-margin').textContent = Math.round(margin) + '%';
-  document.getElementById('mv-exp').textContent = fmtRev(exp / 2);
+  document.getElementById('mv-exp').textContent = fmtRev(exp);
 
   document.getElementById('lv-rev').textContent = fmtRev(rev);
   document.getElementById('lv-cust').textContent = fmtCust(cust);
