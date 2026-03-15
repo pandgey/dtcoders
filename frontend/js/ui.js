@@ -24,9 +24,15 @@ function checkMilestone(level) {
 function fmtRev(v) { const n = Math.round(v/100*500); return n >= 1000 ? '$'+(n/1000).toFixed(0)+'k' : '$'+n; }
 function fmtCust(v) { const n = Math.round(v/100*5000); return n >= 1000 ? (n/1000).toFixed(1)+'k' : n.toString(); }
 
+let prevHealth = -1;
+
 function updateUI() {
   const { rev, cust, margin, exp } = state;
   const health = (rev + cust + margin - exp) / 3;
+
+  // Award XP the first time health crosses into Thriving territory
+  if (health > 65 && prevHealth <= 65) addXP(50);
+  prevHealth = health;
 
   document.getElementById('mv-rev').textContent = fmtRev(rev);
   document.getElementById('mv-cust').textContent = fmtCust(cust);

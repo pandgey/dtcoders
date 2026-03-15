@@ -157,6 +157,7 @@ document.getElementById('pp-apply').addEventListener('click', () => {
   buildCity();
   health = updateUI();
   trackStat('imports');
+  addXP(15);
   showImportToast('📊 City updated from your data!', 'ok');
 });
 
