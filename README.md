@@ -115,8 +115,8 @@ For multi-row files, values are averaged across all rows. You can review and twe
 
 1. **Install Node.js** — use your distro's package manager, for example on Ubuntu/Debian:
    ```bash
-   sudo apt update
-   sudo apt install nodejs npm
+   sudo pacman -Syu
+   sudo pacman -S nodejs npm
    ```
    Or use [nvm](https://github.com/nvm-sh/nvm) for version management:
    ```bash
