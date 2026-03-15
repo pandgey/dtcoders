@@ -10,6 +10,22 @@ function resize() {
 resize();
 window.addEventListener('resize', () => { resize(); makeStars(); buildCity(); });
 
+function loadSavedState() {
+  const stats = JSON.parse(localStorage.getItem('biztownStats') || 'null');
+  if (stats && stats.lastState) {
+    state.rev = stats.lastState.rev || 0;
+    state.cust = stats.lastState.cust || 0;
+    state.margin = stats.lastState.margin || 0;
+    state.exp = stats.lastState.exp || 0;
+    
+    // Update sliders to match loaded state
+    document.getElementById('sr').value = state.rev;
+    document.getElementById('sc').value = state.cust;
+    document.getElementById('sm').value = state.margin;
+    document.getElementById('se').value = state.exp;
+  }
+}
+
 // Cached health value — updated only when state changes, not every frame
 let health = 0;
 
@@ -34,6 +50,7 @@ function onSlider() {
   state.cust   = +document.getElementById('sc').value;
   state.margin = +document.getElementById('sm').value;
   state.exp    = +document.getElementById('se').value;
+  localStorage.setItem('biztownStats', JSON.stringify({ lastState: { rev: state.rev, cust: state.cust, margin: state.margin, exp: state.exp } }));
   health = updateUI();
   clearTimeout(rebuildTimer);
   rebuildTimer = setTimeout(buildCity, 150);
@@ -41,6 +58,7 @@ function onSlider() {
 ['sr','sc','sm','se'].forEach(id => document.getElementById(id).addEventListener('input', onSlider));
 
 // Init
+loadSavedState();
 makeStars();
 buildCity();
 health = updateUI();
