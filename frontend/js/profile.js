@@ -38,6 +38,12 @@ function renderProfile() {
   document.getElementById('profile-role').textContent    = p.role;
   document.getElementById('avatar-initials').textContent = initials(p.name);
 
+  // Fill in level and XP bar
+  const xp = getXPProgress();
+  document.getElementById('level-badge').textContent = `Level ${xp.level} — ${xp.title}`;
+  document.getElementById('xp-bar').style.width      = (xp.progress * 100) + '%';
+  document.getElementById('xp-label').textContent    = `${xp.xpIntoLevel} / ${xp.xpNeeded} XP to next level`;
+
   // Fill in the stat counters
   document.getElementById('stat-cities').textContent     = s.cities;
   document.getElementById('stat-milestones').textContent = s.milestones;
