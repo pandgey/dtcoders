@@ -21,7 +21,7 @@ function checkMilestone(level) {
   });
 }
 
-function fmtRev(v) { const n = Math.round(v/100*1000000000); return '$' + n.toLocaleString(); }
+function fmtRev(v) { const n = Math.round(v/100*10000000); return '$' + n.toLocaleString(); }
 function fmtCust(v) { const n = Math.round(v/100*500000); return n.toLocaleString(); }
 
 let prevHealth = -1;
