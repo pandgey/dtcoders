@@ -8,15 +8,18 @@ const milestones = [
 let shownMilestones = new Set();
 
 function checkMilestone(level) {
+  let delay = 5000;
   milestones.forEach(ms => {
     if (level >= ms.level && !shownMilestones.has(ms.level)) {
       shownMilestones.add(ms.level);
       trackStat('milestones');
       addXP(25);
-      const el = document.getElementById('milestone');
-      el.textContent = ms.msg;
-      el.classList.add('show');
-      setTimeout(() => el.classList.remove('show'), 3000);
+      setTimeout(() => {
+        const el = document.getElementById('milestone');
+        el.textContent = ms.msg;
+        el.classList.add('show');
+        setTimeout(() => el.classList.remove('show'), 3000);
+      }, delay);
     }
   });
 }
