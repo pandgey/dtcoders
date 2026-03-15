@@ -10,30 +10,10 @@ app.listen(PORT_NUMBER, () => {
     console.log(`Server is running on port ${PORT_NUMBER}`);
 });
 
-app.get("/", (req, res) => {
+app.get("/", (_, res) => {
     res.sendFile(__dirname + '/frontend/index.html');
 });
 
-app.get("/profile", (req, res) => {
+app.get("/profile", (_, res) => {
     res.sendFile(__dirname + '/frontend/profile.html');
 });
-
-function calculateBuildingHeight(file) {
-    let height = 0;
-    for (let i = 0; i < file.length; i++) {
-        if (file[i] === "1") {
-            height++;
-        }
-    }
-    return height;
-}
-
-function calculateNumberOfBuildings(file) {
-    let count = 0;
-    for (let i = 0; i < file.length; i++) {
-        if (file[i] === "1") {
-            count++;
-        }
-    }
-    return count;
-}
