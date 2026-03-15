@@ -81,7 +81,6 @@ function buildCity() {
 
   // Track cities built and save last slider state for profile page
   trackStat('cities', { rev: state.rev, cust: state.cust, margin: state.margin, exp: state.exp });
-  addXP(10);
 
   // Cranes when expenses high
   if (e > 0.3) {
