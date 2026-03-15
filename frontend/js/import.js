@@ -142,16 +142,17 @@ function showParsePanel(filename, parsed) {
 }
 
 document.getElementById('pp-apply').addEventListener('click', () => {
-  const rawRev    = parseFloat(document.getElementById('pp-rev').value)    || 0;
-  const rawCust   = parseFloat(document.getElementById('pp-cust').value)   || 0;
-  const rawMargin = parseFloat(document.getElementById('pp-margin').value) || 0;
-  const rawExp    = parseFloat(document.getElementById('pp-exp').value)    || 0;
+  const revInput    = document.getElementById('pp-rev').value;
+  const custInput   = document.getElementById('pp-cust').value;
+  const marginInput = document.getElementById('pp-margin').value;
+  const expInput    = document.getElementById('pp-exp').value;
 
   // Convert real values → 0-100 slider scale (rev: max $500k, cust: max 5000, exp: max $250k)
-  if (rawRev)    { state.rev    = Math.min(100, Math.max(0, Math.round(rawRev    / 5000))); document.getElementById('sr').value = state.rev; }
-  if (rawCust)   { state.cust   = Math.min(100, Math.max(0, Math.round(rawCust   / 50)));   document.getElementById('sc').value = state.cust; }
-  if (rawMargin) { state.margin = Math.min(100, Math.max(0, Math.round(rawMargin)));         document.getElementById('sm').value = state.margin; }
-  if (rawExp)    { state.exp    = Math.min(100, Math.max(0, Math.round(rawExp    / 2500))); document.getElementById('se').value = state.exp; }
+  // Use !== '' so that an explicit 0 still gets applied
+  if (revInput    !== '') { state.rev    = Math.min(100, Math.max(0, Math.round(parseFloat(revInput)    / 5000))); document.getElementById('sr').value = state.rev; }
+  if (custInput   !== '') { state.cust   = Math.min(100, Math.max(0, Math.round(parseFloat(custInput)   / 50)));   document.getElementById('sc').value = state.cust; }
+  if (marginInput !== '') { state.margin = Math.min(100, Math.max(0, Math.round(parseFloat(marginInput))));         document.getElementById('sm').value = state.margin; }
+  if (expInput    !== '') { state.exp    = Math.min(100, Math.max(0, Math.round(parseFloat(expInput)    / 2500))); document.getElementById('se').value = state.exp; }
 
   document.getElementById('parse-panel').classList.remove('open');
   buildCity();
