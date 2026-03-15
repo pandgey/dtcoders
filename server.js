@@ -2,10 +2,7 @@ const express = require("express");
 const app = express();
 const PORT_NUMBER = 8080;
 
-let db1 = [];
-
 app.use(express.json());
-app.set("view engine", "html");
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/frontend'));
 
