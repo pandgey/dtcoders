@@ -62,7 +62,6 @@ function updateUI() {
     weatherEl.textContent = '🌧️';
   }
 
-  const level = Math.round((rev + cust + margin) / 3);
-  checkMilestone(level);
+  checkMilestone(Math.round(health));
   return health;
 }
