@@ -12,6 +12,7 @@ function checkMilestone(level) {
     if (level >= ms.level && !shownMilestones.has(ms.level)) {
       shownMilestones.add(ms.level);
       trackStat('milestones');
+      addXP(25);
       const el = document.getElementById('milestone');
       el.textContent = ms.msg;
       el.classList.add('show');
